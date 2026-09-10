@@ -1,0 +1,17 @@
+[build-system]
+requires = ["setuptools>=65", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "assemble8080"
+version = "0.1.0"
+description = "Intel 8080 assembler with M80-style macros and absolute binary, Intel HEX, and symbol output"
+readme = "README.md"
+requires-python = ">=3.9"
+dependencies = []
+
+[project.scripts]
+assemble8080 = "assemble8080.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]

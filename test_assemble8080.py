@@ -12,6 +12,34 @@ def build(source, **kwargs):
 
 
 class AssemblerTests(unittest.TestCase):
+    def test_printx_semicolons_in_macro_and_repeat_expansion(self):
+        source = '''INNER MACRO X
+IF1
+.PRINTX /X; middle;; end/ ; trailing comment
+ENDIF
+ENDM
+OUTER MACRO Y
+REPT 2
+INNER Y
+ENDM
+ENDM
+OUTER hello
+DB 42 ; regular comments still work
+'''
+        messages = []
+        result = assemble(source.splitlines(), printer=messages.append)
+        self.assertEqual(messages, ['hello; middle;; end'] * 2)
+        self.assertEqual(result[2], b'*')
+
+    def test_printx_semicolon_delimiter_and_irp(self):
+        messages = []
+        source = '''IRP X,<one,two>
+.PRINTX ;X;
+ENDM
+'''
+        assemble(source.splitlines(), printer=messages.append)
+        self.assertEqual(messages, ['one', 'two'] * 2)
+
     def test_original_api_and_formats(self):
         lo, hi, data, syms = build('ORG 100H\nSTART: MVI A,42H\nSTA 200H\nJMP START\nEND')
         self.assertEqual((lo, hi, data, syms), (256,263,bytes.fromhex('3E42320002C30001'),{'START':256}))

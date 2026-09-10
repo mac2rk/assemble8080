@@ -1,0 +1,3 @@
+include assemble8080.py
+include test_assemble8080.py
+recursive-include examples *.asm

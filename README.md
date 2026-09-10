@@ -1,15 +1,39 @@
 # Standalone 8080 assembler
 
-`assemble8080.py` is a Python 3.9+ assembler with no third-party dependencies.
-It extends the original two-pass assembler using the source-language facilities
-described in the supplied **Microsoft MACRO-80 Assembler, CP/M Version,
-Software Reference Manual** (Heath/Zenith, 1981), particularly chapters 2–4.
+`assemble8080` is an installable Python 3.9+ assembler with no third-party runtime dependencies.
+It implements the source-language facilities described in the supplied **Microsoft MACRO-80
+Assembler, CP/M Version, Software Reference Manual** (Heath/Zenith, 1981), particularly chapters 2–4.
 It is an absolute-image assembler, not a complete M80 executable replacement.
 
 ```powershell
+python -m pip install .
+assemble8080 examples/macros.asm output/macros
+python -m assemble8080 program.asm output/program -I includes
+```
+
+For development, use `python -m pip install -e .`. An activated virtual
+environment keeps the installation separate from other Python tools.
+The installed command and module can be run from any directory.
+
+The original script remains a compatibility entry point in the source checkout:
+
+```powershell
 python assemble8080.py examples/macros.asm output/macros
-python assemble8080.py program.asm output/program -I includes
 python -m unittest -v
+```
+
+The script now needs the accompanying `src/assemble8080` directory; to distribute
+the tool, install the package or build a wheel with `python -m pip wheel . --no-deps -w dist`.
+Existing `from assemble8080 import assemble` imports remain supported.
+
+```text
+pyproject.toml                 Installation metadata and console command
+assemble8080.py                Source-checkout compatibility entry point
+src/assemble8080/
+    __init__.py               Public Python API
+    __main__.py               python -m assemble8080 entry point
+    cli.py                    Arguments and output files
+    assembler.py              Assembly engine and Intel HEX serialization
 ```
 
 The original two positional arguments and output formats are preserved:
@@ -121,5 +145,4 @@ uses the supplied `printer` callback (default: `print`).
 
 Tests include the manual's macro/repeat examples, instruction and expression
 encodings, local labels, nested arguments, conditionals, phased code, includes,
-CLI formats, and error handling. The original 3,072-byte `radio86_basic.asm`
-image was also reassembled and compared byte-for-byte with its existing binary.
+CLI formats, and error handling.

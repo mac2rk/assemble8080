@@ -3,3 +3,7 @@ __pycache__/*
 tmp/*
 *.bin
 *.hex
+build/
+dist/
+*.egg-info/
+.venv/
